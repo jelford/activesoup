@@ -1,7 +1,5 @@
 #! /usr/bin/env python3
 # coding=utf-8
-from os import path
-
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
