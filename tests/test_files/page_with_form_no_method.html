@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+        <title>
+        </title>
+</head>
+
+<body>
+        <form id="no-method" action="/form/any_submission">
+                <input name="some-hidden-field" type="hidden" value="5" />
+                <input name="visible-field" type="text" placeholder="something here"></input>
+                <input name="visible-field-with-value" value="preset-value" type="text"></input>
+        </form>
+        <form id="no-action" method="POST">
+                <input name="some-hidden-field" type="hidden" value="5" />
+                <input name="visible-field" type="text" placeholder="something here"></input>
+                <input name="visible-field-with-value" value="preset-value" type="text"></input>
+        </form>
+        <form id="non-standard-method" method="GET">
+                <input name="some-hidden-field" type="hidden" value="5" />
+                <input name="visible-field" type="text" placeholder="something here"></input>
+                <input name="visible-field-with-value" value="preset-value" type="text"></input>
+        </form>
+
+
+</body>
+
+</html>
