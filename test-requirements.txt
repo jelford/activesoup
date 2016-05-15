@@ -1,3 +1,4 @@
-pytest
-tox
-flask
+pytest>=2.9.0
+tox>=2.3.0
+Flask>=0.10.1
+

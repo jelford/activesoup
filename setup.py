@@ -5,10 +5,8 @@ from os import path
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
-here = path.abspath(path.dirname(__file__))
-
 # Get the long description from the README file
-with open(path.join(here, 'README.md'), 'r') as f:
+with open('README.md', 'r') as f:
     long_description = f.read()
 
 
@@ -16,10 +14,6 @@ class UseToxError(TestCommand):
 
     def run_tests(self):
         raise RuntimeError('Run tests with tox')
-
-with open(path.join(here, 'test-requirements.txt'), 'r') as f:
-    test_requirements = f.read().split('\n')
-
 
 setup(
     name='activesoup',
@@ -43,10 +37,5 @@ setup(
         'requests>=2.9.0',
         'html5lib>=0.9',
     ],
-    tests_require=test_requirements,
-    setup_requires=[
-    ],
-    entry_points={
-    },
     cmdclass={'test': UseToxError}
 )
