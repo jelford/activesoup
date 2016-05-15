@@ -13,10 +13,11 @@ with open(path.join(here, 'README.md'), 'r') as f:
 
 
 class UseToxError(TestCommand):
+
     def run_tests(self):
         raise RuntimeError('Run tests with tox')
 
-with open(path.join(here, 'dev-requirements.txt'), 'r') as f:
+with open(path.join(here, 'test-requirements.txt'), 'r') as f:
     test_requirements = f.read().split('\n')
 
 
@@ -40,7 +41,7 @@ setup(
     install_requires=[
         'beautifulsoup4>=4.4.1',
         'requests>=2.9.0',
-        'html5lib',
+        'html5lib>=0.9',
     ],
     tests_require=test_requirements,
     setup_requires=[
