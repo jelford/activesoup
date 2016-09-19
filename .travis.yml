@@ -1,0 +1,18 @@
+language: python
+python:
+    - "3.5"
+install:
+    - pip install tox
+script:
+    - tox
+
+before_deploy: "pip install wheel --upgrade"
+deploy:
+    provider: pypi
+    user: "jelford"
+    password: ${PYPI_PASSWORD}
+    distributions: "sdist bdist_wheel"
+    on:
+        tags: true
+        branch: master
+
