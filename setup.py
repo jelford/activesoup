@@ -15,7 +15,7 @@ class UseToxError(TestCommand):
 
 setup(
     name='activesoup',
-    version='0.0.1',
+    version='0.0.2',
     description='A pure-python headless browser',
     long_description=long_description,
     url='https://github.com/jelford/activesoup',
