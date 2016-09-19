@@ -1,2 +1,2 @@
 #! /usr/bin/env sh
-flake8
+for f in $(git status --porcelain | awk '/M.+\.py$/ {print $2;}'); do flake8 $f; done
