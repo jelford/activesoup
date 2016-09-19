@@ -1,6 +1,9 @@
 activesoup
 ==========
 
+.. image:: https://travis-ci.org/jelford/activesoup.svg?branch=master
+    :target: https://travis-ci.org/jelford/activesoup
+
 A simple library for interacting with the web from python
 
 Description
