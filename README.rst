@@ -20,7 +20,7 @@ headless "browsing" functionality:
 * Robust HTML parsing with
   `html5lib <https://html5lib.readthedocs.org/en/latest/>`__ - parse the web
   like browsers do.
-
+  
 Use cases
 ---------
 
@@ -33,7 +33,7 @@ Consider using ``activesoup`` when:
 * You don't need javascript support (you'll need
   `selenium <http://www.seleniumhq.org/projects/webdriver/>`__ or
   `phantomjs <http://phantomjs.org/>`__).
-
+  
 Usage examples
 --------------
 
@@ -42,7 +42,7 @@ Log into a website, and download a CSV file that's access-protected:
 .. code-block:: python
 
     from activesoup import driver
-
+    
     d = driver.Driver()
     login_page = d.get('https://my-site.com/login')
     login_form = login_page.form
