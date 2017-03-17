@@ -17,7 +17,6 @@ def render(req_path):
 
 
 class LocalWebServer:
-
     def __enter__(self):
         return self
 
@@ -112,6 +111,7 @@ def localwebserver(request):
     request.addfinalizer(lws.stop)
     lws.start_remote()
     return lws
+
 
 if __name__ == '__main__':
     with LocalWebServer(port=60123) as lws:
