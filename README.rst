@@ -17,7 +17,7 @@ headless "browsing" functionality:
 
 * Modern HTTP support with `requests <http://www.python-requests.org/>`__ -
   connection pooling, sessions, ...
-* Convenient access to the web page with
+* Convenient access to the web page with an interface inspired by
   `beautifulsoup <https://www.crummy.com/software/BeautifulSoup/>`__ -
   convenient HTML navigation.
 * Robust HTML parsing with

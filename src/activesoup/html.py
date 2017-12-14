@@ -1,7 +1,21 @@
 from functools import lru_cache
 import requests
-import bs4
+import html5lib
+from xml.etree import ElementTree
 from activesoup import response
+
+
+_namespaces = [
+    'http://www.w3.org/1999/xhtml'
+]
+
+
+def _strip_namespace(etree):
+    for ns in _namespaces:
+        etree.tag = etree.tag.replace(f'{{{ns}}}', '')
+    for c in etree:
+        _strip_namespace(c)
+    return etree
 
 
 class Resolver:
@@ -10,62 +24,71 @@ class Resolver:
         self._driver = driver
 
     def resolve(self, response):
-        return BoundTag(self._driver, response,
-                        bs4.BeautifulSoup(response.text, 'html5lib'))
+        parsed = html5lib.parse(response.content)
+        return BoundTag(self._driver, response, _strip_namespace(parsed))
 
 
 class BoundTag(response.Response):
 
-    def __init__(self, driver, raw_response, soup):
+    def __init__(self, driver, raw_response, et):
         response.Response.__init__(self, raw_response)
         self._driver = driver
-        self._soup = soup
+        self._et = et
 
     @lru_cache(maxsize=1024)
     def __getattr__(self, item):
-        soup_element = getattr(self._soup, item)
-        if soup_element is not None and isinstance(soup_element, bs4.Tag):
-            bound_tag = get_bound_tag_factory(item)(
-                self._driver, self._raw_response, soup_element)
-            return bound_tag
-        else:
-            return soup_element
+        e = self._find(f'.//{item}')
+        if e is not None:
+            return e
+        raise AttributeError(f'{type(self)} has no attribute {item}')
 
+    @lru_cache(maxsize=1024)
     def __getitem__(self, attr):
-        return self._soup[attr]
+        return self._et.attrib[attr]
 
-    def find_one(self, tagname, attrs=None):
-        attrs = attrs or {}
+    def find_all(self, tagname):
+        return [
+            get_bound_tag_factory(tagname)(self._driver, self._raw_response, e)
+            for e in self._et.findall(f'.//{tagname}', _namespaces)
+        ]
 
-        initial_candidates = self._soup.find_all(tagname)
-        filtered_candidates = {c for c in initial_candidates if
-                               all((c.has_attr(k) and c[k] == v for k, v in attrs.items()))}
+    @lru_cache(maxsize=1024)
+    def find(self, xpath):
+        return self._find(xpath)
 
-        if len(filtered_candidates) > 1:
-            raise TagSearchError('More than one element found matching search')
-        elif not(filtered_candidates):
-            raise TagSearchError('No element found matching search')
-        else:
-            for c in filtered_candidates:
-                return get_bound_tag_factory(tagname)(
-                    self._driver, self._raw_response, c)
+    def text(self):
+        return self._et.text
+
+    def _find(self, xpath):
+        e = self._et.find(xpath)
+        if e is None:
+            print(f'searched a {type(self)} for:', xpath)
+            print('could have found:')
+            for c in self._et:
+                print(c.tag, c.attrib)
+            return None
+
+        bound_tag = get_bound_tag_factory(e.tag)(
+            self._driver, self._raw_response, e)
+        return bound_tag
 
 
 class BoundForm(BoundTag):
 
     def submit(self, data: dict, suppress_unspecified=False):
         try:
-            action = self._soup['action']
+            action = self._et.attrib['action']
         except KeyError:
             action = self._raw_response.request.url
         try:
-            method = self._soup['method']
+            method = self._et.attrib['method']
         except KeyError:
             method = 'POST'
 
         to_submit = {}
         if not suppress_unspecified:
-            for i in self._soup.find_all('input'):
+            for i in self.find_all('input'):
+                print('Found: ', i)
                 try:
                     to_submit[i['name']] = i['value']
                 except KeyError:
@@ -79,7 +102,7 @@ class BoundForm(BoundTag):
 
 class BoundTagFactory:
 
-    def __call__(self, driver, session: requests.Session, soup: bs4.BeautifulSoup):
+    def __call__(self, driver, session: requests.Session, element: ElementTree):
         pass
 
 
