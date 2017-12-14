@@ -1,7 +1,10 @@
-import pytest
 import multiprocessing
 import atexit
 from os import path
+
+
+import pytest
+
 
 _local_directory = path.dirname(path.abspath(__file__))
 _test_files_directory = path.join(_local_directory, 'test_files')
@@ -63,6 +66,9 @@ class LocalWebServer:
         import time
         for _ in range(timeout):
             try:
+                if not self._serverthread.is_alive():
+                    pytest.fail('Stub HTTP Server terminated unexpectedly')
+
                 if requests.get(
                     'http://localhost:{port}/status'
                     .format(port=self.port)).status_code \
