@@ -49,7 +49,7 @@ class BoundTag(response.Response):
     def find_all(self, tagname):
         return [
             get_bound_tag_factory(tagname)(self._driver, self._raw_response, e)
-            for e in self._et.findall(f'.//{tagname}', _namespaces)
+            for e in self._et.findall(f'.//{tagname}')
         ]
 
     @lru_cache(maxsize=1024)
