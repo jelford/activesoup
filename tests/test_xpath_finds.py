@@ -16,4 +16,3 @@ def test_can_get_something(nested_objects_page):
     assert content_body is not None
     assert content_body['class'] == 'content-body'
     assert 'Something in the content-body' in content_body.text()
-
