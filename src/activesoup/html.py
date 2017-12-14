@@ -11,8 +11,10 @@ _namespaces = [
 
 
 def _strip_namespace(etree):
-    for ns in _namespaces:
-        etree.tag = etree.tag.replace(f'{{{ns}}}', '')
+    if type(etree.tag) != type(_strip_namespace):
+        # For comments, the tag comes through as a function that, when invoked, returns the element.
+        for ns in _namespaces:
+            etree.tag = etree.tag.replace(f'{{{ns}}}', '')
     for c in etree:
         _strip_namespace(c)
     return etree
