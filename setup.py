@@ -3,6 +3,7 @@
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
+
 # Get the long description from the README file
 with open('README.rst', 'r') as f:
     long_description = f.read()
@@ -13,9 +14,10 @@ class UseToxError(TestCommand):
     def run_tests(self):
         raise RuntimeError('Run tests with tox')
 
+
 setup(
     name='activesoup',
-    version='0.0.3',
+    version='0.0.4',
     description='A pure-python headless browser',
     long_description=long_description,
     url='https://github.com/jelford/activesoup',
