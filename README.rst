@@ -29,6 +29,7 @@ Use cases
 
 Consider using ``activesoup`` when:
 
+* You've already checked out the very talented Kenneth Reitz's `requests-html <https://github.com/kennethreitz/requests-html>`__
 * You need to actively interact with some web-page from Python (e.g. submitting
   forms, downloading files)
 * You don't control the site you need to interact with (if you do, just make an
