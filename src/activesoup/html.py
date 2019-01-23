@@ -3,7 +3,9 @@ import requests
 import html5lib
 from xml.etree import ElementTree
 from activesoup import response
+import logging
 
+log = logging.getLogger(__name__)
 
 _namespaces = [
     'http://www.w3.org/1999/xhtml'
@@ -64,10 +66,10 @@ class BoundTag(response.Response):
     def _find(self, xpath):
         e = self._et.find(xpath)
         if e is None:
-            print(f'searched a {type(self)} for:', xpath)
-            print('could have found:')
+            log.debug(f'searched a {type(self)} for:', xpath)
+            log.debug('could have found:')
             for c in self._et:
-                print(c.tag, c.attrib)
+                log.debug(c.tag, c.attrib)
             return None
 
         bound_tag = get_bound_tag_factory(e.tag)(
@@ -90,7 +92,7 @@ class BoundForm(BoundTag):
         to_submit = {}
         if not suppress_unspecified:
             for i in self.find_all('input'):
-                print('Found: ', i)
+                log.debug('Found: ', i)
                 try:
                     to_submit[i['name']] = i['value']
                 except KeyError:
