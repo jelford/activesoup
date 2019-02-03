@@ -4,7 +4,7 @@ activesoup
 .. image:: https://travis-ci.org/jelford/activesoup.svg?branch=master
     :target: https://travis-ci.org/jelford/activesoup
 
-.. image:: https://img.shields.io/pypi/v/activesoup.svg?maxAge=2592000
+.. image:: https://img.shields.io/pypi/v/activesoup.svg?maxAge=84000
     :target: https://pypi.python.org/pypi?:action=display&name=activesoup
 
 A simple library for interacting with the web from python
