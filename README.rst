@@ -23,13 +23,13 @@ headless "browsing" functionality:
 * Robust HTML parsing with
   `html5lib <https://html5lib.readthedocs.org/en/latest/>`__ - parse the web
   like browsers do.
-  
+
 Use cases
 ---------
 
 Consider using ``activesoup`` when:
 
-* You've already checked out the very talented Kenneth Reitz's `requests-html <https://github.com/kennethreitz/requests-html>`__
+* You've already checked out the `requests-html <https://github.com/kennethreitz/requests-html>`__
 * You need to actively interact with some web-page from Python (e.g. submitting
   forms, downloading files)
 * You don't control the site you need to interact with (if you do, just make an
@@ -37,7 +37,7 @@ Consider using ``activesoup`` when:
 * You don't need javascript support (you'll need
   `selenium <http://www.seleniumhq.org/projects/webdriver/>`__ or
   `phantomjs <http://phantomjs.org/>`__).
-  
+
 Usage examples
 --------------
 
@@ -45,18 +45,38 @@ Log into a website, and download a CSV file that's access-protected:
 
 .. code-block:: python
 
-    from activesoup import driver
-    
-    d = driver.Driver()
-    login_page = d.get('https://my-site.com/login')
-    login_form = login_page.form
-    member_portal = login_form.submit({'username': secret_store['username'],
-                        'password': secret_store['password']})
+    >>> import activesoup
 
-    if member_portal.response.status_code not in range(200, 300):
-        raise RuntimeError("Couldn't log in")
+    >>> # Start a session
+    >>> d = activesoup.Driver()
 
-    # Logged in now
+    >>> page = d.get("https://httpbin.org/forms/post")
 
-    csv_report = d.get('/members_area/file.csv')
-    csv_report.save_to('~/interesting_resport.csv')
+    >>> # conveniently access elements, inspired by BeautifulSoup
+    >>> form = page.form
+
+    >>> # get the power of raw xpath search too
+    >>> form.find('.//input[@name="size"]')
+    BoundTag<input>
+
+    >>> # inspect element attributes
+    >>> print([i['name'] for i in form.find_all('input')])
+    ['custname', 'custtel', 'custemail', 'size', 'size', 'size', 'topping', 'topping', 'topping', 'topping', 'delivery']
+
+    >>> # work actively with objects on the page
+    >>> r = form.submit({"custname": "john", "size": "small"})
+
+    >>> # responses parsed and ready based on content type
+    >>> r.keys()
+    dict_keys(['args', 'data', 'files', 'form', 'headers', 'json', 'origin', 'url'])
+    >>> r['form']
+    {'custname': 'john', 'size': 'small', 'topping': 'mushroom'}
+
+    >>> # access the underlying requests.Session too
+    >>> d.session
+    <requests.sessions.Session object at 0x7f283dc95700>
+
+    >>> # log in with cookie support
+    >>> d.get('https://httpbin.org/cookies/set/foo/bar)
+    >>> d.session.cookies['foo']
+    'bar'

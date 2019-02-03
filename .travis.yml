@@ -2,7 +2,7 @@ language: python
 python:
     - "3.6"
 install:
-    - pip install tox flake8 
+    - pip install tox flake8
 script:
     - flake8 src tests
     - tox
@@ -16,4 +16,3 @@ deploy:
     on:
         tags: true
         branch: master
-

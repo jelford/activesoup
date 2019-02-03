@@ -1,7 +1,14 @@
-# Extras
+### Project-specific ###
+
+poetry.lock # This is a library
+.mypy_cache
+.pytest_cache
+
+# IDE etc #
 *.iml
 .idea
 tags
+*.swp
 
 # Created by https://www.gitignore.io/api/python,virtualenv,intellij
 
@@ -163,4 +170,3 @@ fabric.properties
 
 # *.iml
 # modules.xml
-
