@@ -9,7 +9,15 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: "3.9"
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: "${{ runner.os}}-${{ job.name }}-pip-${{ hashFiles('pyproject.toml') }}"
     - uses: Gr1N/setup-poetry@v4
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pypoetry
+        key: "${{ runner.os }}-${{ job.name }}-poetry-${{ hashFiles('Poetry.lock') }}"
     - run: poetry install
     - run: poetry run black --check
     - run: poetry run mypy src
@@ -38,6 +46,10 @@ jobs:
         name: dist-artefacts
         path: dist/
     - uses: Gr1N/setup-poetry@v4
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pypoetry
+        key: "${{ runner.os }}-${{ job.name }}-poetry-${{ hashFiles('Poetry.lock') }}"
     - run: poetry run pip install dist/activesoup-*.${{ matrix.pkg-type }}
     - run: poetry install --no-root
     - run: poetry run pytest
