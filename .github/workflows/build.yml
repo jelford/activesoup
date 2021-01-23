@@ -19,6 +19,7 @@ jobs:
       with:
         name: dist-artefacts
         path: dist/
+
   test:
     needs: build
     runs-on: ubuntu-latest
@@ -32,14 +33,26 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-
     - uses: actions/download-artifact@v2
       with:
         name: dist-artefacts
         path: dist/
-
     - uses: Gr1N/setup-poetry@v4
-
     - run: poetry run pip install dist/activesoup-*.${{ matrix.pkg-type }}
     - run: poetry install --no-root
     - run: poetry run pytest
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: dist-artefacts
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@master
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+        name: Publish package
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
