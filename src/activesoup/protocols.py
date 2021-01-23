@@ -1,7 +1,13 @@
 from typing import Any, Optional
 
 import requests
-from typing_extensions import Protocol
+
+try:
+    from typing import Protocol
+except ImportError:
+    # Older python versions will not have Protocol available
+    class Protocol:  # type: ignore
+        pass
 
 
 class ActiveSoupResult(Protocol):
