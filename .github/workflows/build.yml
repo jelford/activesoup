@@ -28,6 +28,7 @@ jobs:
         pkg-type: ["whl", "tar.gz"]
     name: "Test (Python: ${{ matrix.python-version }}, Dist: ${{ matrix.pkg-type}})"
     steps:
+    - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
