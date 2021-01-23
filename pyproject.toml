@@ -27,7 +27,6 @@ html5lib = ">=0.9"
 python = "^3.6.1"
 
 [tool.poetry.dev-dependencies]
-tox = "^=3.21.2"
 pytest = "^=6.2.1"
 Flask = "^1.1.2"
 pre-commit = "^2.9.3"
