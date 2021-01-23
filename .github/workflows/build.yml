@@ -9,12 +9,15 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: "3.9"
+    - run: |
+        echo "~/.local/bin" >> $GITHUB_PATH
+      name: "Local bin on path..."
     - uses: actions/cache@v2
       name: Pip Cache
       with:
         path: ~/.cache/pip
-        key: "${{ runner.os }}-build-pip-3.9-${{ hashFiles('pyproject.toml') }}"
-    - uses: Gr1N/setup-poetry@v4
+        key: "${{ runner.os }}-build-pip-3.9-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('ci/ci-requirements.txt') }}"
+    - run: pip install --user -r ci/ci-requirements.txt
       name: Poetry Installation
     - uses: actions/cache@v2
       name: Poetry Cache
@@ -48,6 +51,9 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - run: |
+        echo "~/.local/bin" >> $GITHUB_PATH
+      name: "Local bin on path..."
     - uses: actions/download-artifact@v2
       name: Fetch built packages
       with:
@@ -57,8 +63,8 @@ jobs:
       name: Pip Cache
       with:
         path: ~/.cache/pip
-        key: "${{ runner.os }}-build-pip-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}"
-    - uses: Gr1N/setup-poetry@v4
+        key: "${{ runner.os }}-build-pip-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('ci/ci-requirements.txt') }}"
+    - run: pip install --user -r ci/ci-requirements.txt
       name: Poetry Installation
     - uses: actions/cache@v2
       name: Poetry Cache
