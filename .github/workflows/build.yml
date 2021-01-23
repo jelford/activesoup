@@ -13,6 +13,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - uses: Gr1N/setup-poetry@v4
+    - run: poetry install
     - run: poetry run black --check
     - run: poetry run mypy src
     - run: poetry run pytest
