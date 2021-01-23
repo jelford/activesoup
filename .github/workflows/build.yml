@@ -40,6 +40,6 @@ jobs:
 
     - uses: Gr1N/setup-poetry@v4
 
-    - run: pip install dist/activesoup-*.${{ matrix.pkg-type }}
+    - run: poetry run pip install dist/activesoup-*.${{ matrix.pkg-type }}
     - run: poetry install --no-root
     - run: poetry run pytest
