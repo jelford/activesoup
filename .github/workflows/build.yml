@@ -17,7 +17,7 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pypoetry
-        key: "${{ runner.os }}-build-poetry-${{ hashFiles('poetry.lock') }}"
+        key: "${{ runner.os }}-build-poetry-3.9-${{ hashFiles('poetry.lock') }}"
     - run: poetry install
     - run: poetry run black --check
     - run: poetry run mypy src
@@ -53,7 +53,7 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pypoetry
-        key: "${{ runner.os }}-build-poetry-${{ hashFiles('poetry.lock') }}"
+        key: "${{ runner.os }}-build-poetry-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}"
     - run: poetry install --no-root
     - run: poetry run pip install dist/activesoup-*.${{ matrix.pkg-type }}
     - run: poetry run pytest
