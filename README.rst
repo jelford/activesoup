@@ -58,6 +58,12 @@ Log into a website, and download a CSV file that's access-protected:
     >>> # get the power of raw xpath search too
     >>> form.find('.//input[@name="size"]')
     BoundTag<input>
+    >>> # any element, searching by attribute
+    >>> form.find('.//*', name="size")
+    BoundTag<input>
+    >>> # or just search by attribute
+    >>> form.find(name="size")
+    BoundTag<input>
 
     >>> # inspect element attributes
     >>> print([i['name'] for i in form.find_all('input')])
@@ -77,6 +83,6 @@ Log into a website, and download a CSV file that's access-protected:
     <requests.sessions.Session object at 0x7f283dc95700>
 
     >>> # log in with cookie support
-    >>> d.get('https://httpbin.org/cookies/set/foo/bar)
+    >>> d.get('https://httpbin.org/cookies/set/foo/bar')
     >>> d.session.cookies['foo']
     'bar'
