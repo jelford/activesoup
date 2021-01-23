@@ -12,12 +12,12 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pip
-        key: "${{ runner.os }}-${{ job.name }}-pip-${{ hashFiles('pyproject.toml') }}"
+        key: "${{ runner.os }}-build-pip-3.9-${{ hashFiles('pyproject.toml') }}"
     - uses: Gr1N/setup-poetry@v4
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pypoetry
-        key: "${{ runner.os }}-${{ job.name }}-poetry-${{ hashFiles('Poetry.lock') }}"
+        key: "${{ runner.os }}-build-poetry-${{ hashFiles('poetry.lock') }}"
     - run: poetry install
     - run: poetry run black --check
     - run: poetry run mypy src
@@ -45,11 +45,15 @@ jobs:
       with:
         name: dist-artefacts
         path: dist/
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: "${{ runner.os }}-build-pip-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}"
     - uses: Gr1N/setup-poetry@v4
     - uses: actions/cache@v2
       with:
         path: ~/.cache/pypoetry
-        key: "${{ runner.os }}-${{ job.name }}-poetry-${{ hashFiles('Poetry.lock') }}"
+        key: "${{ runner.os }}-build-poetry-${{ hashFiles('poetry.lock') }}"
     - run: poetry run pip install dist/activesoup-*.${{ matrix.pkg-type }}
     - run: poetry install --no-root
     - run: poetry run pytest
@@ -62,9 +66,9 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          key: "${{ runner.os }}-${{ job.name }}-pip-deploy"
+          key: "${{ runner.os }}-build-pip-deploy"
           restore-keys: |
-            ${{ runner.os }}-${{ job.name }}-pip-
+            ${{ runner.os }}-build-pip-
 
       - uses: actions/download-artifact@v2
         with:
