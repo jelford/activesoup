@@ -1,6 +1,5 @@
 ### Project-specific ###
 
-poetry.lock # This is a library
 .mypy_cache
 .pytest_cache
 
