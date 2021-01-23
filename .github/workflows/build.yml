@@ -54,8 +54,8 @@ jobs:
       with:
         path: ~/.cache/pypoetry
         key: "${{ runner.os }}-build-poetry-${{ hashFiles('poetry.lock') }}"
-    - run: poetry run pip install dist/activesoup-*.${{ matrix.pkg-type }}
     - run: poetry install --no-root
+    - run: poetry run pip install dist/activesoup-*.${{ matrix.pkg-type }}
     - run: poetry run pytest
 
   publish:
