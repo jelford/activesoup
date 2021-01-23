@@ -10,7 +10,7 @@ jobs:
       with:
         python-version: "3.9"
     - run: |
-        echo "~/.local/bin" >> $GITHUB_PATH
+        echo "$(realpath ~)/.local/bin" >> $GITHUB_PATH
       name: "Local bin on path..."
     - uses: actions/cache@v2
       name: Pip Cache
@@ -52,7 +52,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - run: |
-        echo "~/.local/bin" >> $GITHUB_PATH
+        echo "$(realpath ~)/.local/bin" >> $GITHUB_PATH
       name: "Local bin on path..."
     - uses: actions/download-artifact@v2
       name: Fetch built packages
