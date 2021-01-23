@@ -1,29 +1,44 @@
 name: Build
 on: [push]
 jobs:
-  test:
-    runs-on: "ubuntu-latest"
-    strategy:
-      matrix:
-        python-version: ['3.6', '3.9']
-    name: Python ${{ matrix.python-version }} build
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - uses: Gr1N/setup-poetry@v4
-    - run: poetry install
-    - run: poetry run black --check
-    - run: poetry run mypy src
-    - run: poetry run pytest
   build:
-    needs: test
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-latest"
+    name: Package lint and build
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
         python-version: "3.9"
     - uses: Gr1N/setup-poetry@v4
+    - run: poetry install
+    - run: poetry run black --check
+    - run: poetry run mypy src
     - run: poetry build
+    - name: Upload built modules
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-artefacts
+        path: dist/
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
+        pkg-type: ["whl", "tar.gz"]
+    name: "Test (Python: ${{ matrix.python-version }}, Dist: ${{ matrix.pkg-type}})"
+    steps:
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: dist-artefacts
+        path: dist/
+
+    - uses: Gr1N/setup-poetry@v4
+
+    - run: pip install dist/activesoup-*.${{ matrix.pkg-type }}
+    - run: poetry install --no-root
+    - run: poetry run pytest
