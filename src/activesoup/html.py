@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from xml.etree.ElementTree import Element
 from xml.etree.ElementTree import tostring as et_str
 
@@ -43,15 +43,15 @@ class BoundTag(response.Response):
     def __getitem__(self, attr: str) -> str:
         return self._et.attrib[attr]
 
-    def find_all(self, tagname):
+    def find_all(self, tagname) -> List["BoundTag"]:
         return [
             _get_bound_tag_factory(tagname)(self._driver, self._raw_response, e)
             for e in self._et.findall(f".//{tagname}")
         ]
 
     @lru_cache(maxsize=1024)
-    def find(self, xpath: str) -> Optional["BoundTag"]:
-        return self._find(xpath)
+    def find(self, xpath: str = None, **kwargs) -> Optional["BoundTag"]:
+        return self._find(xpath, **kwargs)
 
     def text(self) -> Optional[str]:
         return self._et.text
@@ -65,7 +65,13 @@ class BoundTag(response.Response):
     def etree(self) -> Element:
         return self._et
 
-    def _find(self, xpath: str) -> Optional["BoundTag"]:
+    def _find(self, xpath: str = None, **kwargs) -> Optional["BoundTag"]:
+        if xpath is None:
+            xpath = ".//*"
+
+        if kwargs:
+            xpath += "".join(f"[@{k}='{v}']" for k, v in kwargs.items())
+
         e = self._et.find(xpath)
         if e is None:
             return None
