@@ -1,11 +1,11 @@
 name: Build
 on: [push]
 jobs:
-  install-deps:
+  test:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        python-version: ['3.6', '3.7', '3.8', '3.9']
+        python-version: ['3.6']
     name: Python ${{ matrix.python-version }} build
     steps:
     - uses: actions/checkout@v2
@@ -17,3 +17,8 @@ jobs:
     - run: poetry run black --check
     - run: poetry run mypy src
     - run: poetry run pytest
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - run: poetry build
