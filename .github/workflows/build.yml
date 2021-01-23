@@ -5,7 +5,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        python-version: ['3.6', '3.7', '3.8', '3.9']
+        python-version: ['3.6', '3.9']
     name: Python ${{ matrix.python-version }} build
     steps:
     - uses: actions/checkout@v2
@@ -21,4 +21,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: "3.9"
+    - uses: Gr1N/setup-poetry@v4
     - run: poetry build
