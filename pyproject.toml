@@ -25,6 +25,7 @@ include = [
 requests = "^2.9.0"
 html5lib = ">=0.9"
 python = "^3.6.1"
+typing_extensions = "^3.10"
 
 [tool.poetry.dev-dependencies]
 pytest = "^=6.2.1"
