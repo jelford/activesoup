@@ -56,8 +56,8 @@ class Driver:
 
         return urljoin(current_url_str, possibly_relative_url)
 
-    def get(self, url, **kwargs):
-        return self.do(requests.Request(method="GET", url=url))
+    def get(self, url, headers=None, **kwargs):
+        return self.do(requests.Request(method="GET", url=url, headers=headers))
 
     def do(self, request: requests.Request) -> "Driver":
         request.url = self.resolve_url(request.url)
