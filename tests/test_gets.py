@@ -19,3 +19,19 @@ def test_can_decode_page_with_html_comments(localwebserver):
     text = page.body.p.text()
 
     assert "some body text" in text
+
+
+def test_sets_headers_on_request(requests_mock):
+    d = driver.Driver()
+
+    requests_mock.get(
+        "http://remote.test",
+        request_headers={"X-Test-Header": "Value"},
+        headers={"Content-Type": "text/html"},
+        text="<html><body>test-response</body></html>",
+    )
+
+    page = d.get("http://remote.test", headers={"X-Test-Header": "Value"})
+    text = page.body.text()
+
+    assert "test-response" == text
