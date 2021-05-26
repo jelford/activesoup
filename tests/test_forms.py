@@ -44,3 +44,17 @@ def test_can_submit_form_without_explicit_action(localwebserver):
     )
 
     assert result._raw_response.json() == {"fieldname": "value"}
+
+
+def test_can_submit_form_without_explicit_action(localwebserver):
+    d = driver.Driver()
+    page = d.get(
+        f"http://localhost:{localwebserver.port}/form/page_with_checkboxes_and_radios.html"
+    )
+
+    result = page.find('.//form').submit(data={})
+
+    assert result._raw_response.json() == {
+        "checkbox-field-1": ["label-1", "label-2", "label-3"],
+        "radio-field-1": "label-1",
+    }

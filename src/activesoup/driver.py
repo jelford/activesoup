@@ -56,8 +56,14 @@ class Driver:
 
         return urljoin(current_url_str, possibly_relative_url)
 
-    def get(self, url, headers=None, **kwargs):
-        return self.do(requests.Request(method="GET", url=url, headers=headers))
+    def get(self, url, **kwargs):
+        """Move the Driver to a new page.
+
+        Arguments:
+        url -- the new URL for the Driver to navigate to (e.g. `https://www.example.com`)
+        
+        """
+        return self.do(requests.Request(method="GET", url=url, **kwargs))
 
     def do(self, request: requests.Request) -> "Driver":
         request.url = self.resolve_url(request.url)

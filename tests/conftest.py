@@ -43,7 +43,11 @@ class LocalWebServer:
         def form(name):
             req = flask.request
             if req.method == "POST":
-                return (json.dumps(req.form), 200, {"Content-Type": "application/json"})
+                data = dict(req.form)
+                for fname, fvalues in req.form.lists():
+                    if len(fvalues) > 1:
+                        data[fname] = fvalues
+                return (json.dumps(data), 200, {"Content-Type": "application/json"})
             else:
                 return render(name)
 

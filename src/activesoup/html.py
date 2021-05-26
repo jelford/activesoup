@@ -43,10 +43,10 @@ class BoundTag(response.Response):
     def __getitem__(self, attr: str) -> str:
         return self._et.attrib[attr]
 
-    def find_all(self, tagname) -> List["BoundTag"]:
+    def find_all(self, element_matcher) -> List["BoundTag"]:
         return [
-            _get_bound_tag_factory(tagname)(self._driver, self._raw_response, e)
-            for e in self._et.findall(f".//{tagname}")
+            _get_bound_tag_factory(element_matcher)(self._driver, self._raw_response, e)
+            for e in self._et.findall(f".//{element_matcher}")
         ]
 
     @lru_cache(maxsize=1024)
@@ -100,13 +100,29 @@ class BoundForm(BoundTag):
         to_submit = {}
         if not suppress_unspecified:
             for i in self.find_all("input"):
-                try:
-                    to_submit[i["name"]] = i["value"]
-                except KeyError:
-                    pass
+                type = i.attrs().get("type", "text")
+
+                if type in {"checkbox", "radio"}:
+                    should_take_value = i.attrs().get("checked") is not None
+                else:
+                    should_take_value = True
+
+                if should_take_value:
+                    try:
+                        if type != "checkbox":
+                            to_submit[i["name"]] = i["value"]
+                        else:
+                            value = to_submit.get(i["name"])
+                            if value is None:
+                                value = []
+
+                            value.append(i["value"])
+                            to_submit[i["name"]] = value
+                    except KeyError:
+                        pass
+            
 
         to_submit.update(data)
-
         req = requests.Request(method=method, url=action, data=to_submit)
         return self._driver.do(req)
 
