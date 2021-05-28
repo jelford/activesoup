@@ -10,9 +10,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+import subprocess
+
+top_level_path = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], encoding="utf-8").strip()
+sys.path.insert(0, os.path.abspath(os.path.join(top_level_path, 'src')))
+import activesoup
+
 import sphinx_rtd_theme
 
 
