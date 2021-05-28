@@ -1,6 +1,7 @@
 import atexit
 import multiprocessing
 from os import path
+from typing import Dict, Any
 
 import pytest
 
@@ -15,6 +16,15 @@ def render(req_path):
 
     with open(path_to_file, "r") as f:
         return f.read()
+
+
+def _render_multidict(multidict) -> Dict[str, Any]:
+    data = dict(multidict)
+    for fname, fvalues in multidict.lists():
+        if len(fvalues) > 1:
+            data[fname] = fvalues
+
+    return data
 
 
 class LocalWebServer:
@@ -43,10 +53,7 @@ class LocalWebServer:
         def form(name):
             req = flask.request
             if req.method == "POST":
-                data = dict(req.form)
-                for fname, fvalues in req.form.lists():
-                    if len(fvalues) > 1:
-                        data[fname] = fvalues
+                data = _render_multidict(req.form)
                 return (json.dumps(data), 200, {"Content-Type": "application/json"})
             else:
                 return render(name)
@@ -58,7 +65,15 @@ class LocalWebServer:
         @self._local_web_server.route("/json")
         def json_request():
             req = flask.request
-            return (json.dumps(req.args), 200, {"Content-Type": "application/json"})
+            return (
+                json.dumps(_render_multidict(req.args)),
+                200,
+                {"Content-Type": "application/json"},
+            )
+
+        @self._local_web_server.route("/csv")
+        def csv_document():
+            return ("Col1,Col2\nVal1,Val2", 200, {"Content-Type": "text/csv"})
 
         self._local_web_server.run(host=host, port=port)
 

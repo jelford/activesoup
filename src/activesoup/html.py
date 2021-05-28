@@ -1,15 +1,21 @@
 from functools import lru_cache
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Any, cast
 from xml.etree.ElementTree import Element
 from xml.etree.ElementTree import tostring as et_str
 
+from requests.models import Response
+
 import html5lib
 import requests
-from typing_extensions import Protocol
+
+try:
+    from typing import Protocol
+except ImportError:
+    from typing_extensions import Protocol  # type: ignore
 
 from activesoup import response
+import activesoup
 
-from .protocols import Driver
 
 _namespaces = ["http://www.w3.org/1999/xhtml"]
 
@@ -26,11 +32,14 @@ def _strip_namespace(etree: Element) -> Element:
 
 class BoundTag(response.Response):
     def __init__(
-        self, driver: Driver, raw_response: requests.Response, et: Element
+        self,
+        driver: "activesoup.Driver",
+        raw_response: requests.Response,
+        element: Element,
     ) -> None:
-        response.Response.__init__(self, raw_response, "text/html")
+        super().__init__(raw_response, "text/html")
         self._driver = driver
-        self._et = et
+        self._et = element
 
     @lru_cache(maxsize=1024)
     def __getattr__(self, item: str) -> "BoundTag":
@@ -87,17 +96,19 @@ class BoundTag(response.Response):
 
 
 class BoundForm(BoundTag):
-    def submit(self, data: Dict, suppress_unspecified: bool = False) -> Driver:
+    def submit(
+        self, data: Dict, suppress_unspecified: bool = False
+    ) -> "activesoup.Driver":
         try:
             action = self._et.attrib["action"]
         except KeyError:
-            action = self._raw_response.request.url
+            action = cast(str, self._raw_response.request.url)
         try:
             method = self._et.attrib["method"]
         except KeyError:
             method = "POST"
 
-        to_submit = {}
+        to_submit: Dict[str, Any] = {}
         if not suppress_unspecified:
             for i in self.find_all("input"):
                 type = i.attrs().get("type", "text")
@@ -120,27 +131,18 @@ class BoundForm(BoundTag):
                             to_submit[i["name"]] = value
                     except KeyError:
                         pass
-            
 
         to_submit.update(data)
         req = requests.Request(method=method, url=action, data=to_submit)
-        return self._driver.do(req)
+        return self._driver._do(req)
 
 
-class _BoundTagFactory(Protocol):
-    def __call__(
-        self, driver: Driver, session: requests.Session, element: Element
-    ) -> BoundTag:
-        ...
+_BoundTagFactory = Callable[["activesoup.Driver", requests.Response, Element], BoundTag]
 
 
-class Resolver:
-    def __init__(self, driver: Driver) -> None:
-        self._driver = driver
-
-    def resolve(self, response) -> BoundTag:
-        parsed: Element = html5lib.parse(response.content)
-        return BoundTag(self._driver, response, _strip_namespace(parsed))
+def resolve(driver: "activesoup.Driver", response: requests.Response) -> BoundTag:
+    parsed: Element = html5lib.parse(response.content)
+    return BoundTag(driver, response, _strip_namespace(parsed))
 
 
 def _get_bound_tag_factory(tagname: str) -> _BoundTagFactory:
