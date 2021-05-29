@@ -8,12 +8,11 @@ DOCSROOT="${PROJECTROOT}/docs"
 poetry export --dev --format requirements.txt > docs/requirements.txt
 
 cd $DOCSROOT
-rm -rf "${DOCSROOT}/source"
 
 make clean
+rm -rf "${DOCSROOT}/source"
 
 export SPHINX_APIDOC_OPTIONS="members,no-undoc-members,show-inheritance"
-sphinx-apidoc -o "${DOCSROOT}/source" --module-first "${PROJECTROOT}/src/activesoup" \
-    "${PROJECTROOT}/src/activesoup/driver.py"  # public objects are re-exported from __init__.py
+sphinx-apidoc -o "${DOCSROOT}/source" --ext-intersphinx --module-first "${PROJECTROOT}/src/activesoup"
 
 make html

@@ -1,6 +1,6 @@
-from .driver import Driver
 from .response import Response
+from .driver import Driver
 
-__all__ = ["Driver", "Response"]
+__all__ = ["Response", "Driver"]
 
 __version__ = "0.2.2"

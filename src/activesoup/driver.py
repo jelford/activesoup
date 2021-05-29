@@ -1,4 +1,3 @@
-from functools import partial
 import functools
 from typing import Any, Dict, Optional, Callable
 
@@ -6,15 +5,21 @@ from urllib.parse import urljoin
 
 import requests
 
+import activesoup
 import activesoup.html
-import activesoup.response
+from activesoup.response import CsvResponse, JsonResponse
 
 
 class DriverError(RuntimeError):
+    """Errors that occur as part of operating the driver
+    
+    These errors reflect logic errors (such as accessing the ``last_response``
+    before navigating) or that the ``Driver`` is unable to carry out the
+    action that was requested (e.g. the server returned a bad redirect)"""
     pass
 
 
-_Resolver = Callable[[requests.Response], activesoup.response.Response]
+_Resolver = Callable[[requests.Response], activesoup.Response]
 
 
 class ContentResolver:
@@ -24,21 +29,21 @@ class ContentResolver:
     def register(self, content_type: str, resolver: _Resolver) -> None:
         self._resolvers[content_type] = resolver
 
-    def resolve(self, response: requests.Response) -> activesoup.response.Response:
+    def resolve(self, response: requests.Response) -> activesoup.Response:
         content_type = response.headers.get("Content-Type", None)
         if content_type is not None:
             for k, factory in self._resolvers.items():
                 if content_type.startswith(k):
                     return factory(response)
 
-        return activesoup.response.Response(response, content_type)
+        return activesoup.Response(response, content_type)
 
 
 class Driver:
     """:py:class:`Driver` is the main entrypoint into ``activesoup``.
 
     The ``Driver`` provides navigation functions, and keeps track of the
-    current page.
+    current page. Note that this class is re-exposed via ``activesoup.Driver``.
 
     >>> d = Driver()
     >>> page = d.get("https://github.com/jelford/activesoup")
@@ -74,15 +79,15 @@ class Driver:
         self.session = requests.Session()
         for k, v in kwargs.items():
             setattr(self.session, k, v)
-        self._last_response: Optional[activesoup.response.Response] = None
+        self._last_response: Optional[activesoup.Response] = None
         self._raw_response: Optional[requests.Response] = None
         self.content_resolver = ContentResolver()
         self.content_resolver.register(
             "text/html", functools.partial(activesoup.html.resolve, self)
         )
-        self.content_resolver.register("text/csv", activesoup.response.CsvResponse)
+        self.content_resolver.register("text/csv", CsvResponse)
         self.content_resolver.register(
-            "application/json", activesoup.response.JsonResponse
+            "application/json", JsonResponse
         )
 
     def __enter__(self) -> "Driver":
@@ -124,6 +129,8 @@ class Driver:
         :param kwargs: additional keyword arguments are passed in to the
             constructor of the :py:class:`requests.Request` used to fetch the
             page.
+        :returns: the ``Driver`` object itself
+        :rtype: Driver
 
         """
         return self._do(requests.Request(method="GET", url=url, **kwargs))
@@ -151,15 +158,17 @@ class Driver:
 
         :returns: ``None`` if no page has been loaded, otherwise the URL of the most recently
             loaded page.
+        :rtype: str
         """
         return self._last_response.url if self._last_response is not None else None
 
     @property
-    def last_response(self) -> Optional[activesoup.response.Response]:
+    def last_response(self) -> Optional[activesoup.Response]:
         """Get the response object that was the result of the most recent page load
 
         :returns: ``None`` if no page has been loaded, otherwise the parsed result of the most
             recent page load
+        :rtype: activesoup.Response
         """
         return self._last_response
 

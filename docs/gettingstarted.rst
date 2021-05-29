@@ -76,7 +76,7 @@ Now we're ready to fetch a page:
 
     page = d.get("http://localhost:8080/forms/post")
 
-We can see all the inputs available on the page using ``find_all``:
+We can see all the inputs available on the page using :py:meth:`find_all <activesoup.html.BoundTag.find_all>`:
 
 .. code-block::
 
@@ -149,8 +149,8 @@ the name "size":
     for s in pizza_size_inputs:
         print(s['value'])      # small, medium, large           # 2
 
-1. We're using a more advanced form of ``find_all`` here. ``find_all`` is implemented using Python's built-in
-:py:mod:`xml.etree.ElementTree`:
+1. We're using a more advanced form of :py:meth:`find_all <activesoup.html.BoundTag.find_all>` here. 
+``find_all`` is implemented using Python's built-in :py:mod:`xml.etree.ElementTree`:
 
     - Any HTML page is parsed as an :py:class:`xml.etree.ElementTree.Element`
     - ``find_all`` is a shortcut to the ``Element``'s :py:meth:`xml.etree.ElementTree.Element.findall` method,
@@ -199,7 +199,8 @@ Here, we've extracted the HTML snippet we found by inspecting the element in the
 1. ``find`` accepts an `XPath query <https://docs.python.org/3/library/xml.etree.elementtree.html#xpath-support>`_
    ``ElementTree``'s XPath support is a little limited, but still very useful - you can find all the details on the
    official documentation page.
-2. We can extract the raw HTML from any element by querying its ``.html()`` method. A couple of points to note:
+2. We can extract the raw HTML from any element by querying its :py:meth:`.html() <activesoup.html.BoundTag.html>` method. 
+   A couple of points to note:
 
     - Since the top-level page is an element too, we could have used the same method to get the raw HTML of the whole page too.
     - The string here is generated from the *parsed* HTML. ``activesoup`` interprets pages in the same way as the browser would,

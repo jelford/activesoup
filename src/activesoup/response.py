@@ -1,3 +1,28 @@
+"""
+The module contains the various types of response object, used to access after
+navigating to a page with :py:meth:`activesoup.Driver.get`. All responses
+are instances of :py:class:`activesoup.response.Response`. When ``activesoup``
+recognises the type of data, the response is specialized for convenient access.
+This detection is driven by the ``Content-Type`` header in the server's response
+(so, if a web server labels a CSV file as HTML, ``activesoup`` will just assume
+it's ``HTML`` and try to parse it as such)
+
+The following specialisations are applied:
+
+``text/html``
+    :py:class:`activesoup.html.BoundTag`. The HTML page is parsed, and a handle
+    to the top-level ``<html>`` element is provided.
+
+``text/csv``
+    :py:class:`activesoup.response.CsvResponse`
+
+``application/json``
+    :py:class:`activesoup.response.JsonResponse`. The JSON data is parsed into
+    python objects via ``json.loads``, and made available via dictionary-like 
+    access.
+
+"""
+
 import requests
 
 from typing import Union, Dict, Any, List, Optional
@@ -11,6 +36,9 @@ class UnknownResponseType(RuntimeError):
 
 class Response:
     """The result of a page load by :py:class:`activesoup.Driver`.
+
+    :param requests.Response raw_response: The raw data returned from the server.
+    :param str content_type: The datatype used for interpretting this response object.
 
     This top-level class contains attributes common to all responses. Child
     classes contain response-type-specific helpers. Check the :py:attr:`content_type`
@@ -34,25 +62,37 @@ class Response:
 
     @property
     def url(self) -> str:
-        """Which URL was requested that resulted in this response?"""
+        """Which URL was requested that resulted in this response?
+        
+        :rtype: str"""
         return self._raw_response.url
 
     @property
     def status_code(self):
         """Status code from the HTTP response
 
-        e.g. 200"""
+        e.g. 200
+        
+        :rtype: int"""
         return self._raw_response.status_code
 
     @property
     def response(self):
+        """The raw :py:class:`requests.Response` object returned by the server.
+        
+        You can use this object to inspect information not directly available
+        through the ``activesoup`` API.
+        
+        :rtype: requests.Response"""
         return self._raw_response
 
     @property
     def content_type(self):
         """The type of content contained in this response
 
-        e.g. application/csv"""
+        e.g. application/csv
+        
+        :rtype: str"""
 
         return self._content_type
 
@@ -70,23 +110,32 @@ class Response:
 class JsonResponse(Response):
     """A response object representing a ``JSON`` page
 
+    :param requests.Response raw_response: The raw data returned from the server.
+
     ``JSON`` data returned by the page will be parsed into a Python object:
 
-    >>> import requests
-    >>> canned_response = requests.Response()
-    >>> canned_response._content = b'{"key": "value"}'
-    >>> resp = JsonResponse(canned_response)
+    >>> raw_content = '{"key": "value"}'
+    >>> resp = json_page(raw_content)
     >>> resp["key"]
     'value'
+
+    
     """
 
     def __init__(self, raw_response: requests.Response) -> None:
+        """
+        """
         super().__init__(raw_response, "application/json")
         self.json = raw_response.json()
 
     def __getitem__(
         self, name: Union[str, int]
     ) -> Union[str, int, Dict[str, Any], List[Any]]:
+        """Look up an item in the parsed JSON object. 
+        
+        ``__getitem__`` allows you to treat this object like a JSON array or 
+        object directly, without any further unwrapping.
+        """
         return self.json[name]
 
     def __getattr__(self, attr: str) -> Any:
@@ -100,7 +149,11 @@ class JsonResponse(Response):
 
 
 class CsvResponse(Response):
-    """A response object representing a ``CSV`` page"""
+    """A response object representing a ``CSV`` page
+
+    :param requests.Response raw_response: The raw data returned from the server.
+    
+    """
 
     def __init__(self, raw_response):
         super().__init__(raw_response, "text/csv")

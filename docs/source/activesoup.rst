@@ -9,6 +9,14 @@ activesoup package
 Submodules
 ----------
 
+activesoup.driver module
+------------------------
+
+.. automodule:: activesoup.driver
+   :members:
+   :no-undoc-members:
+   :show-inheritance:
+
 activesoup.html module
 ----------------------
 

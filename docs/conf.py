@@ -16,7 +16,7 @@ import subprocess
 
 top_level_path = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], encoding="utf-8").strip()
 sys.path.insert(0, os.path.abspath(os.path.join(top_level_path, 'src')))
-import activesoup
+import activesoup # lint: ignore
 
 import sphinx_rtd_theme
 
