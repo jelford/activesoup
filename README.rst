@@ -29,7 +29,8 @@ Full documentation can be found at https://activesoup.dev.
 Use cases
 ---------
 
-Consider using ``activesoup`` when:
+``activesoup`` aims to provide just enough functionality for basic web automation
+/ crawler tasks. Consider using ``activesoup`` when:
 
 * You've already checked out the `requests-html <https://github.com/kennethreitz/requests-html>`__
 * You need to actively interact with some web-page from Python (e.g. submitting
