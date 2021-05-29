@@ -4,6 +4,7 @@
 .pytest_cache
 
 # IDE etc #
+.vscode
 *.iml
 .idea
 tags
