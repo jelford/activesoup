@@ -15,7 +15,7 @@ Description
 ``activesoup`` combines familiar python web capabilities for convenient
 headless "browsing" functionality:
 
-* Modern HTTP support with `requests <http://www.python-requests.org/>`__ -
+* Modern HTTP support with `requests <https://docs.python-requests.org/>`__ -
   connection pooling, sessions, ...
 * Convenient access to the web page with an interface inspired by
   `beautifulsoup <https://www.crummy.com/software/BeautifulSoup/>`__ -
@@ -23,6 +23,8 @@ headless "browsing" functionality:
 * Robust HTML parsing with
   `html5lib <https://html5lib.readthedocs.org/en/latest/>`__ - parse the web
   like browsers do.
+
+Full documentation can be found at https://activesoup.dev.
 
 Use cases
 ---------
