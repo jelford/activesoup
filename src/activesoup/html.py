@@ -24,13 +24,13 @@ def _strip_namespace(etree: Element) -> Element:
 
 class BoundTag(activesoup.Response):
     """A ``BoundTag`` represents a single node in an HTML document.
-    
+
     When a new HTML page is opened by the :py:class:`activesoup.Driver`,
     the page is parsed, and a new ``BoundTag`` is created, which is a
-    handle to the top-level ``<html>`` element. 
+    handle to the top-level ``<html>`` element.
 
-    ``BoundTag`` provides convenient access to data in the page:    
-    
+    ``BoundTag`` provides convenient access to data in the page:
+
     Via field-style find operation (inspired by BeautifulSoup):
 
         >>> page = html_page('<html><body><a id="link">link-text</a></body></html>')
@@ -41,16 +41,17 @@ class BoundTag(activesoup.Response):
 
         >>> page.a["id"]
         'link'
-    
+
     A ``BoundTag`` wraps an :py:class:`xml.etree.ElementTree.Element`,
-    providing shortcuts for common operations. The underlying ``Element`` can 
-    be accessed via :py:meth:`etree <BoundTag.etree>`. When child elements are 
+    providing shortcuts for common operations. The underlying ``Element`` can
+    be accessed via :py:meth:`etree <BoundTag.etree>`. When child elements are
     accessed via those helpers, they are also wrapped in a ``BoundTag`` object.
 
     Note: a ``BoundTag`` object is created internally by the
     :py:class:`activesoup.Driver` - you will generally not need to
     construct one directly.
     """
+
     def __init__(
         self,
         driver: "activesoup.Driver",
@@ -101,11 +102,11 @@ class BoundTag(activesoup.Response):
         ``find_all`` is a shortcut for ``.etree().findall()`` with a relative path:
 
         .. code-block::
-        
+
             # The following are equivalent:
             tag.find_all("a")
             tag.etree().findall(".//a")
-        
+
         """
         return [
             _get_bound_tag_factory(element_matcher)(self._driver, self._raw_response, e)
@@ -115,9 +116,9 @@ class BoundTag(activesoup.Response):
     @lru_cache(maxsize=1024)
     def find(self, xpath: str = None, **kwargs) -> Optional["BoundTag"]:
         """Find a single element matching the provided xpath expression
-        
+
         :param str xpath: xpath expression that will be forwarded to :py:meth:`etree's find <python.xml.etree.ElementTree.Element.find>`
-        :param kwargs: Optional dictionary of attribute values. If present, 
+        :param kwargs: Optional dictionary of attribute values. If present,
             ``activesoup`` will append attribute filters to the XPath expression
         :rtype: Optional[BoundTag]
 
@@ -136,7 +137,7 @@ class BoundTag(activesoup.Response):
 
         ``find`` is a shortcut for ``.etree().find()``:
 
-        .. code-block:: 
+        .. code-block::
 
             # The following are equivalent except that the returned value is wrapped in a BoundTag
             page.find('input', type="checkbox")
@@ -151,7 +152,7 @@ class BoundTag(activesoup.Response):
 
     def text(self) -> Optional[str]:
         """Access the text content of an HTML node
-        
+
         :rtype: Optional[str]
 
         >>> page = html_page('<html><body><p>Hello world</p></body></html>')
@@ -174,9 +175,9 @@ class BoundTag(activesoup.Response):
 
         :rtype: bytes
 
-        The output is generated from the parsed HTML structure, as interpretted by ``html5lib``. 
-        ``html5lib`` is how ``activesoup`` interprets pages in the same way as the browser would, 
-        and that might mean making some changes to the structure of the document - for example, 
+        The output is generated from the parsed HTML structure, as interpretted by ``html5lib``.
+        ``html5lib`` is how ``activesoup`` interprets pages in the same way as the browser would,
+        and that might mean making some changes to the structure of the document - for example,
         if the original HTML contained errors.
         """
         return et_str(self._et)
@@ -220,31 +221,32 @@ class BoundTag(activesoup.Response):
 class BoundForm(BoundTag):
     """A ``BoundForm`` is a specialisation of the ``BoundTag`` class, returned
     when the tag is a ``<form>`` element.
-    
+
     ``BoundForm`` adds the ability to submit forms to the server.
-    
+
     >>> d = activesoup.Driver()
     >>> page = d.get("https://github.com/jelford/activesoup/issues/new")
     >>> f = page.form
     >>> page = f.submit({"title": "Misleading examples", "body": "Examples appear to show interactions with GitHub.com but don't reflect GitHub's real page structure"})
     >>> page.url
     'https://github.com/jelford/activesoup/issues/1'
-    
-    
+
+
     """
+
     def submit(
         self, data: Dict, suppress_unspecified: bool = False
     ) -> "activesoup.Driver":
         """Submit the form to the server
-        
-        :param Dict data: The values that should be provided for the various 
+
+        :param Dict data: The values that should be provided for the various
             fields in the submitted form. Keys should correspond to the form
             inputs' ``name`` attribute, and may be simple string values, or
             lists (in the case where a form input can take several values)
         :param bool suppress_unspecified: If False (the default), then
             ``activesoup`` will augment the ``data`` parameter to include the
             values of fields that are:
-            
+
             - not specified in the ``data`` parameter
             - present with default values in the form as it was presented to
               us.
@@ -305,4 +307,3 @@ def resolve(driver: "activesoup.Driver", response: requests.Response) -> BoundTa
 
 def _get_bound_tag_factory(tagname: str) -> _BoundTagFactory:
     return {"form": BoundForm}.get(tagname, BoundTag)
-

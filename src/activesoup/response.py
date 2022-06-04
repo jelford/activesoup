@@ -63,7 +63,7 @@ class Response:
     @property
     def url(self) -> str:
         """Which URL was requested that resulted in this response?
-        
+
         :rtype: str"""
         return self._raw_response.url
 
@@ -72,17 +72,17 @@ class Response:
         """Status code from the HTTP response
 
         e.g. 200
-        
+
         :rtype: int"""
         return self._raw_response.status_code
 
     @property
     def response(self):
         """The raw :py:class:`requests.Response` object returned by the server.
-        
+
         You can use this object to inspect information not directly available
         through the ``activesoup`` API.
-        
+
         :rtype: requests.Response"""
         return self._raw_response
 
@@ -91,7 +91,7 @@ class Response:
         """The type of content contained in this response
 
         e.g. application/csv
-        
+
         :rtype: str"""
 
         return self._content_type
@@ -119,21 +119,20 @@ class JsonResponse(Response):
     >>> resp["key"]
     'value'
 
-    
+
     """
 
     def __init__(self, raw_response: requests.Response) -> None:
-        """
-        """
+        """ """
         super().__init__(raw_response, "application/json")
         self.json = raw_response.json()
 
     def __getitem__(
         self, name: Union[str, int]
     ) -> Union[str, int, Dict[str, Any], List[Any]]:
-        """Look up an item in the parsed JSON object. 
-        
-        ``__getitem__`` allows you to treat this object like a JSON array or 
+        """Look up an item in the parsed JSON object.
+
+        ``__getitem__`` allows you to treat this object like a JSON array or
         object directly, without any further unwrapping.
         """
         return self.json[name]
@@ -152,7 +151,7 @@ class CsvResponse(Response):
     """A response object representing a ``CSV`` page
 
     :param requests.Response raw_response: The raw data returned from the server.
-    
+
     """
 
     def __init__(self, raw_response):

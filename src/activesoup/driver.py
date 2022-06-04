@@ -12,10 +12,11 @@ from activesoup.response import CsvResponse, JsonResponse
 
 class DriverError(RuntimeError):
     """Errors that occur as part of operating the driver
-    
+
     These errors reflect logic errors (such as accessing the ``last_response``
     before navigating) or that the ``Driver`` is unable to carry out the
     action that was requested (e.g. the server returned a bad redirect)"""
+
     pass
 
 
@@ -86,9 +87,7 @@ class Driver:
             "text/html", functools.partial(activesoup.html.resolve, self)
         )
         self.content_resolver.register("text/csv", CsvResponse)
-        self.content_resolver.register(
-            "application/json", JsonResponse
-        )
+        self.content_resolver.register("application/json", JsonResponse)
 
     def __enter__(self) -> "Driver":
         return self
