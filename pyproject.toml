@@ -37,7 +37,7 @@ typed-ast = "^1.5"
 isort = "^5.10.0"
 bump2version = "^1.0.1"
 requests-mock = "^1.9.3"
-Sphinx = "^4.0.2"
+Sphinx = "^5.0"
 sphinx-rtd-theme = "^0.5.2"
 types-requests = "^2.27"
 
