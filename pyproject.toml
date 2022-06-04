@@ -9,7 +9,7 @@ description = "A pure-python headless browser"
 license = "MIT"
 authors = ["James Elford <james.p.elford@gmail.com>"]
 readme = "README.rst"
-homepage = "https://github.com/jelford/activesoup"
+homepage = "https://activesoup.dev"
 repository = "https://github.com/jelford/activesoup"
 classifiers = [
     "Development Status :: 3 - Alpha"
