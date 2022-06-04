@@ -4,7 +4,7 @@ jobs:
   build:
     strategy:
       matrix:
-        pythonversion: ["3.10", "3.11.0b3"]
+        pythonversion: ["3.10", "3.11.0-beta.3"]
     runs-on: "ubuntu-latest"
     name: Package lint and build
     steps:
