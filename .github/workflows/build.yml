@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.6.7", "3.7", "3.8", "3.9", "3.10", "3.11.0b3"]
+        python-version: ["3.6.7", "3.7", "3.8", "3.9", "3.10", "3.11.0-beta.3"]
         pkg-type: ["whl", "tar.gz"]
     name: "Test (Python: ${{ matrix.python-version }}, Dist: ${{ matrix.pkg-type}})"
     steps:
