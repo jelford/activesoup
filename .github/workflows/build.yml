@@ -65,6 +65,11 @@ jobs:
         key: "${{ runner.os }}-build-poetry-${{ matrix.pythonversion }}-${{ hashFiles('poetry.lock') }}"
     - run: poetry install --no-root
       name: Install dependencies (poetry)
+    - uses: actions/download-artifact@v2
+      name: Fetch built packages
+      with:
+        name: dist-artefacts
+        path: dist/
     - run: poetry run pip install dist/activesoup-*.${{ matrix.pkg-type }}
       name: Install library (pip)
     - run: poetry run pytest
