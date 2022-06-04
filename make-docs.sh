@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
-set LFS=$'\t\n'
+IFS=$'\t\n'
 
 PROJECTROOT=$(git rev-parse --show-toplevel)
 DOCSROOT="${PROJECTROOT}/docs"
 
-poetry export --dev --format requirements.txt > docs/requirements.txt
+poetry export --dev --without-hashes --format requirements.txt > docs/requirements.txt
 
 cd $DOCSROOT
 
