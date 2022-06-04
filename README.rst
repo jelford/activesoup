@@ -32,7 +32,7 @@ Use cases
 ``activesoup`` aims to provide just enough functionality for basic web automation
 / crawler tasks. Consider using ``activesoup`` when:
 
-* You've already checked out the `requests-html <https://github.com/kennethreitz/requests-html>`__
+* You've already checked out `requests-html <https://github.com/kennethreitz/requests-html>`__
 * You need to actively interact with some web-page from Python (e.g. submitting
   forms, downloading files)
 * You don't control the site you need to interact with (if you do, just make an
@@ -44,7 +44,8 @@ Use cases
 Usage examples
 --------------
 
-Log into a website, and download a CSV file that's access-protected:
+In the example below, we'll load a page with a simple form, enumerate
+the fields, and make a submission:
 
 .. code-block:: python
 
