@@ -3,4 +3,4 @@ from .driver import Driver
 
 __all__ = ["Response", "Driver"]
 
-__version__ = "0.2.2"
+__version__ = "0.3.0"
